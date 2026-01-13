@@ -1,13 +1,15 @@
 import crypto from "crypto";
-import jwt, { type JwtPayload } from "jsonwebtoken";
+import jwt, { type JwtPayload, type SignOptions } from "jsonwebtoken";
 import { env } from "../config/env";
 
 type TokenPayload = JwtPayload & { sub: string };
 
 export function signAccessToken(userId: string): string {
-  return jwt.sign({ sub: userId }, env.JWT_ACCESS_SECRET as string, {
-    expiresIn: env.ACCESS_TOKEN_TTL,
-  });
+  return jwt.sign(
+    { sub: userId },
+    env.JWT_ACCESS_SECRET,
+    { expiresIn: env.ACCESS_TOKEN_TTL } as SignOptions,
+  );
 }
 
 export function signRefreshToken() {
@@ -20,6 +22,7 @@ export function hashToken(token: string) {
 }
 
 export function verifyAccessToken(token: string): TokenPayload {
-  return jwt.verify(token, env.JWT_ACCESS_SECRET as string) as TokenPayload;
+  const secret: string = env.JWT_ACCESS_SECRET;
+  return jwt.verify(token, secret) as TokenPayload;
 }
 
