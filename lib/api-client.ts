@@ -42,9 +42,11 @@ export function createApiClient({ tokens, setTokens }: TokenManager) {
     path: string,
     init?: RequestInit & { skipAuth?: boolean },
   ): Promise<T> {
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       "Content-Type": "application/json",
-      ...(init?.headers ?? {}),
+      ...(typeof init?.headers === "object" && !Array.isArray(init.headers)
+        ? (init.headers as Record<string, string>)
+        : {}),
     };
 
     if (!init?.skipAuth && tokens?.accessToken) {
@@ -114,7 +116,13 @@ export function createApiClient({ tokens, setTokens }: TokenManager) {
     workouts: {
       list: () => request<{ workouts: Workout[] }>("/workouts"),
       history: () => request<{ history: WorkoutHistory[] }>("/workouts/history"),
-      create: (payload: Partial<Workout> & { exercises?: Partial<Workout["exercises"][0]>[] }) =>
+      create: (payload: {
+        name: string;
+        description?: string;
+        dayOfWeek: number;
+        time: string;
+        exercises?: Array<{ name: string; description?: string; order: number }>;
+      }) =>
         request<{ workout: Workout }>("/workouts", {
           method: "POST",
           body: JSON.stringify(payload),

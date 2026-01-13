@@ -190,7 +190,7 @@ export default function Home() {
         .filter(Boolean)
         .map((text, index) => {
           const [name, description] = text.split(" - ");
-          return { name, description, order: index };
+          return { name, description: description || undefined, order: index };
         });
 
       const { workout } = await api.workouts.create({
