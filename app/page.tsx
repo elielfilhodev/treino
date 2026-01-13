@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Plus, ShoppingCart, CheckSquare, Clock3, LogOut } from "lucide-react";
+import { Plus, ShoppingCart, CheckSquare, Clock3, LogOut, Trash2 } from "lucide-react";
 import {
   createApiClient,
   loadStoredTokens,
@@ -74,6 +74,7 @@ export default function Home() {
       setHistory([]);
       setShopping([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokens]);
 
   async function bootstrap() {
@@ -315,6 +316,31 @@ export default function Home() {
       setShopping((prev) =>
         prev.map((it) => (it.id === id ? { ...it, purchased: item.purchased } : it)),
       );
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  }
+
+  async function handleShoppingRemove(id: string) {
+    if (!confirm("Tem certeza que deseja excluir este item?")) return;
+    try {
+      await api.shopping.remove(id);
+      setShopping((prev) => prev.filter((item) => item.id !== id));
+      showMessage("Item removido");
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  }
+
+  async function handleWorkoutDelete(id: string) {
+    if (!confirm("Tem certeza que deseja excluir este treino? Todos os exercícios serão removidos.")) return;
+    try {
+      await api.workouts.remove(id);
+      setWorkouts((prev) => prev.filter((w) => w.id !== id));
+      if (selectedWorkoutId === id) {
+        setSelectedWorkoutId(null);
+      }
+      showMessage("Treino removido");
     } catch (err) {
       setError((err as Error).message);
     }
@@ -608,7 +634,7 @@ export default function Home() {
                           className="rounded-xl border border-zinc-200 bg-white p-4"
                         >
                           <div className="flex items-start justify-between gap-2">
-                            <div className="space-y-1">
+                            <div className="space-y-1 flex-1">
                               <p className="text-xs uppercase tracking-tight text-zinc-500">
                                 {dayLabels[workout.dayOfWeek]} · {workout.time}
                               </p>
@@ -619,9 +645,19 @@ export default function Home() {
                                 {workout.description || "Sem descrição"}
                               </p>
                             </div>
-                            <Badge variant={workout.completed ? "success" : "outline"}>
-                              {workout.completed ? "Concluído" : "Pendente"}
-                            </Badge>
+                            <div className="flex items-center gap-2">
+                              <Badge variant={workout.completed ? "success" : "outline"}>
+                                {workout.completed ? "Concluído" : "Pendente"}
+                              </Badge>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => handleWorkoutDelete(workout.id)}
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
                           <div className="mt-3 space-y-2">
                             {workout.exercises.slice(0, 3).map((ex) => (
@@ -792,16 +828,26 @@ export default function Home() {
                         key={item.id}
                         className="flex items-center justify-between rounded-xl border border-zinc-200 bg-white p-4"
                       >
-                        <div>
+                        <div className="flex-1">
                           <p className="text-sm font-semibold text-zinc-900">{item.name}</p>
                           <p className="text-xs text-zinc-600">
                             {item.quantity || "Sem quantidade"}
                           </p>
                         </div>
-                        <Checkbox
-                          checked={item.purchased}
-                          onChange={(e) => handleShoppingToggle(item.id, e.target.checked)}
-                        />
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            checked={item.purchased}
+                            onChange={(e) => handleShoppingToggle(item.id, e.target.checked)}
+                          />
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleShoppingRemove(item.id)}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -910,7 +956,7 @@ export default function Home() {
             </div>
           </div>
           <div className="space-y-2">
-            <Label>Exercícios (um por linha, opcional ' - descrição')</Label>
+            <Label>Exercícios (um por linha, opcional &apos; - descrição&apos;)</Label>
             <Textarea
               placeholder={`Ex: \nSupino inclinado - 3x10\nRemada curvada - 4x8\nPrancha - 3x45s`}
               value={workoutForm.exercises}

@@ -147,6 +147,8 @@ export function createApiClient({ tokens, setTokens }: TokenManager) {
           `/workouts/${workoutId}/exercises/${exerciseId}/toggle`,
           { method: "PATCH", body: JSON.stringify({ completed }) },
         ),
+      remove: (id: string) =>
+        request<void>(`/workouts/${id}`, { method: "DELETE" }),
     },
     shopping: {
       list: () => request<{ items: ShoppingItem[] }>("/shopping-items"),
