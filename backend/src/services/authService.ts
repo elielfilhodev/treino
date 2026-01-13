@@ -31,6 +31,7 @@ export function toPublicUser(
     id: user.id,
     name: user.name,
     email: user.email,
+    avatarUrl: user.avatarUrl,
     preferences: user.preferences,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
@@ -137,6 +138,15 @@ export async function getProfile(userId: string) {
     include: { preferences: true },
   });
   if (!user) throw createError.notFound("Usuário não encontrado");
+  return toPublicUser(user);
+}
+
+export async function updateAvatar(userId: string, avatarUrl: string | null) {
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data: { avatarUrl },
+    include: { preferences: true },
+  });
   return toPublicUser(user);
 }
 

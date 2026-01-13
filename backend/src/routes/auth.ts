@@ -6,6 +6,7 @@ import {
   refreshSession,
   registerUser,
   revokeRefreshToken,
+  updateAvatar,
 } from "../services/authService.js";
 import { authenticate } from "../middleware/auth.js";
 import type { AuthenticatedRequest } from "../types/express.js";
@@ -60,6 +61,23 @@ router.get(
     try {
       const profile = await getProfile(req.user!.id);
       res.json({ user: profile });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.patch(
+  "/me/avatar",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      const { avatarUrl } = req.body;
+      if (typeof avatarUrl !== "string" && avatarUrl !== null) {
+        return res.status(400).json({ message: "avatarUrl deve ser uma string ou null" });
+      }
+      const updated = await updateAvatar(req.user!.id, avatarUrl ?? null);
+      res.json({ user: updated });
     } catch (error) {
       next(error);
     }

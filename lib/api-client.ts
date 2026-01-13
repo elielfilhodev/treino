@@ -107,6 +107,11 @@ export function createApiClient({ tokens, setTokens }: TokenManager) {
           skipAuth: true,
         }),
       me: () => request<{ user: User }>("/auth/me"),
+      updateAvatar: (avatarUrl: string | null) =>
+        request<{ user: User }>("/auth/me/avatar", {
+          method: "PATCH",
+          body: JSON.stringify({ avatarUrl }),
+        }),
       logout: (refreshToken: string) =>
         request<void>("/auth/logout", {
           method: "POST",

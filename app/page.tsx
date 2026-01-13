@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Plus, ShoppingCart, CheckSquare, Clock3, LogOut, Trash2 } from "lucide-react";
+import Image from "next/image";
+import { Plus, ShoppingCart, CheckSquare, Clock3, LogOut, Trash2, Menu, User as UserIcon, Upload } from "lucide-react";
 import {
   createApiClient,
   loadStoredTokens,
@@ -25,6 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { Modal } from "@/components/ui/modal";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 type AuthMode = "login" | "register";
 
@@ -47,6 +49,9 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("agenda");
   const [showWorkoutModal, setShowWorkoutModal] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("");
 
   const api = useMemo(
     () =>
@@ -367,6 +372,23 @@ export default function Home() {
     }
   }
 
+  async function handleUpdateAvatar() {
+    if (!user) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const { user: updated } = await api.auth.updateAvatar(avatarUrl || null);
+      setUser(updated);
+      setShowAvatarModal(false);
+      setAvatarUrl("");
+      showMessage("Avatar atualizado");
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   function progressStats() {
     if (workouts.length === 0) return 0;
     const completed = workouts.filter((w) => w.completed).length;
@@ -377,7 +399,7 @@ export default function Home() {
 
   return (
     <div className="mx-auto min-h-screen max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
-      <header className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-start sm:justify-between">
+      <header className="mb-6 flex items-start justify-between gap-4 sm:mb-8">
         <div className="flex-1">
           <p className="text-xs font-semibold uppercase tracking-tight text-zinc-500 sm:text-sm">
             Treino
@@ -390,21 +412,80 @@ export default function Home() {
           </p>
         </div>
         {user ? (
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-            <div className="text-left sm:text-right">
-              <p className="text-xs text-zinc-500 sm:text-sm">Bem-vindo</p>
-              <p className="text-sm font-semibold text-zinc-900 sm:text-base">{user.name}</p>
+          <>
+            {/* Desktop: Header normal */}
+            <div className="hidden flex-col gap-2 sm:flex sm:flex-row sm:items-center sm:gap-3">
+              <div className="text-right">
+                <p className="text-xs text-zinc-500 sm:text-sm">Bem-vindo</p>
+                <p className="text-sm font-semibold text-zinc-900 sm:text-base">{user.name}</p>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleLogout} 
+                className="gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                Sair
+              </Button>
             </div>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={handleLogout} 
-              className="w-full justify-center gap-2 sm:w-auto"
-            >
-              <LogOut className="h-4 w-4" />
-              Sair
-            </Button>
-          </div>
+            {/* Mobile: Menu hamburger */}
+            <Sheet open={showMenu} onOpenChange={setShowMenu}>
+              <SheetTrigger asChild className="sm:hidden">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+                <SheetHeader>
+                  <SheetTitle>Menu</SheetTitle>
+                </SheetHeader>
+                <div className="mt-6 space-y-6">
+                  {/* Perfil com avatar */}
+                  <div className="flex flex-col items-center gap-4 pb-6 border-b border-zinc-200">
+                    <div className="relative">
+                      {user.avatarUrl ? (
+                        <Image
+                          src={user.avatarUrl}
+                          alt={user.name}
+                          width={80}
+                          height={80}
+                          className="h-20 w-20 rounded-full object-cover border-2 border-zinc-200"
+                          unoptimized
+                        />
+                      ) : (
+                        <div className="h-20 w-20 rounded-full bg-zinc-200 flex items-center justify-center border-2 border-zinc-300">
+                          <UserIcon className="h-10 w-10 text-zinc-500" />
+                        </div>
+                      )}
+                      <button
+                        onClick={() => {
+                          setShowMenu(false);
+                          setShowAvatarModal(true);
+                        }}
+                        className="absolute bottom-0 right-0 h-7 w-7 rounded-full bg-zinc-900 text-white flex items-center justify-center hover:bg-zinc-800 transition-colors"
+                      >
+                        <Upload className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm font-semibold text-zinc-900">{user.name}</p>
+                      <p className="text-xs text-zinc-600">{user.email}</p>
+                    </div>
+                  </div>
+                  {/* Botão sair */}
+                  <Button 
+                    variant="outline" 
+                    onClick={handleLogout} 
+                    className="w-full gap-2"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sair
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </>
         ) : null}
       </header>
 
@@ -1004,6 +1085,64 @@ export default function Home() {
               className="w-full sm:w-auto"
             >
               {loading ? "Criando..." : "Criar treino"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={showAvatarModal}
+        onClose={() => {
+          setShowAvatarModal(false);
+          setAvatarUrl("");
+        }}
+        title="Atualizar foto de perfil"
+      >
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label>URL da imagem</Label>
+            <Input
+              type="url"
+              placeholder="https://exemplo.com/foto.jpg"
+              value={avatarUrl}
+              onChange={(e) => setAvatarUrl(e.target.value)}
+            />
+            <p className="text-xs text-zinc-600">
+              Cole a URL de uma imagem da internet ou deixe em branco para remover a foto.
+            </p>
+          </div>
+          {avatarUrl && (
+            <div className="flex justify-center">
+              <Image
+                src={avatarUrl}
+                alt="Preview"
+                width={128}
+                height={128}
+                className="h-32 w-32 rounded-full object-cover border-2 border-zinc-200"
+                unoptimized
+                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                  (e.target as HTMLImageElement).style.display = "none";
+                }}
+              />
+            </div>
+          )}
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowAvatarModal(false);
+                setAvatarUrl("");
+              }}
+              className="w-full sm:w-auto"
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleUpdateAvatar}
+              disabled={loading}
+              className="w-full sm:w-auto"
+            >
+              {loading ? "Salvando..." : "Salvar"}
             </Button>
           </div>
         </div>
