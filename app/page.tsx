@@ -412,31 +412,28 @@ export default function Home() {
           </p>
         </div>
         {user ? (
-          <>
-            {/* Desktop: Header normal */}
-            <div className="hidden flex-col gap-2 sm:flex sm:flex-row sm:items-center sm:gap-3">
-              <div className="text-right">
-                <p className="text-xs text-zinc-500 sm:text-sm">Bem-vindo</p>
-                <p className="text-sm font-semibold text-zinc-900 sm:text-base">{user.name}</p>
-              </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={handleLogout} 
-                className="gap-2"
-              >
-                <LogOut className="h-4 w-4" />
-                Sair
+          <Sheet open={showMenu} onOpenChange={setShowMenu}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="sm" className="gap-2">
+                {user.avatarUrl ? (
+                  <Image
+                    src={user.avatarUrl}
+                    alt={user.name}
+                    width={32}
+                    height={32}
+                    className="h-8 w-8 rounded-full object-cover border border-zinc-200"
+                    unoptimized
+                  />
+                ) : (
+                  <div className="h-8 w-8 rounded-full bg-zinc-200 flex items-center justify-center border border-zinc-300">
+                    <UserIcon className="h-4 w-4 text-zinc-500" />
+                  </div>
+                )}
+                <span className="hidden sm:inline text-sm font-medium text-zinc-900">{user.name}</span>
+                <Menu className="h-5 w-5 sm:hidden" />
               </Button>
-            </div>
-            {/* Mobile: Menu hamburger */}
-            <Sheet open={showMenu} onOpenChange={setShowMenu}>
-              <SheetTrigger asChild className="sm:hidden">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
                 <SheetHeader>
                   <SheetTitle>Menu</SheetTitle>
                 </SheetHeader>
@@ -485,7 +482,6 @@ export default function Home() {
                 </div>
               </SheetContent>
             </Sheet>
-          </>
         ) : null}
       </header>
 
