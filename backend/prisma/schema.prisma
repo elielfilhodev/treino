@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String            @id @default(cuid())
+  name           String
+  email          String            @unique
+  passwordHash   String
+  preferences    UserPreferences?
+  workouts       Workout[]
+  shoppingItems  ShoppingItem[]
+  refreshTokens  RefreshToken[]
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+}
+
+model UserPreferences {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  goals         String[]
+  trainingTypes String[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Workout {
+  id          String           @id @default(cuid())
+  userId      String
+  dayOfWeek   Int
+  time        String
+  name        String
+  description String
+  completed   Boolean          @default(false)
+  exercises   Exercise[]
+  history     WorkoutHistory[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Exercise {
+  id          String   @id @default(cuid())
+  workoutId   String
+  name        String
+  description String?
+  order       Int
+  completed   Boolean  @default(false)
+  workout     Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+}
+
+model WorkoutHistory {
+  id          String   @id @default(cuid())
+  workoutId   String
+  completedAt DateTime @default(now())
+  workout     Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+}
+
+model ShoppingItem {
+  id         String   @id @default(cuid())
+  userId     String
+  name       String
+  quantity   String?
+  purchased  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model RefreshToken {
+  id         String   @id @default(cuid())
+  userId     String
+  tokenHash  String
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+

@@ -1,0 +1,12 @@
+NEXT_PUBLIC_API_URL=http://localhost:3333
+NEXT_PUBLIC_APP_NAME=Treino
+
+# Backend
+PORT=3333
+DATABASE_URL=postgresql://user:password@localhost:5432/treino
+JWT_ACCESS_SECRET=change-me-access-secret
+JWT_REFRESH_SECRET=change-me-refresh-secret
+ACCESS_TOKEN_TTL=15m
+REFRESH_TOKEN_TTL=7d
+FRONTEND_URL=http://localhost:3000
+
