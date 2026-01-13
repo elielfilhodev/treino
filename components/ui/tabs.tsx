@@ -42,9 +42,11 @@ export function TabsList({
 export function TabsTrigger({
   value,
   children,
+  className,
 }: {
   value: string;
   children: React.ReactNode;
+  className?: string;
 }) {
   const ctx = React.useContext(TabsContext);
   if (!ctx) throw new Error("TabsTrigger deve estar dentro de Tabs");
@@ -58,6 +60,7 @@ export function TabsTrigger({
         isActive
           ? "bg-white shadow-sm ring-1 ring-zinc-200"
           : "text-zinc-600 hover:bg-white/40",
+        className,
       )}
     >
       {children}

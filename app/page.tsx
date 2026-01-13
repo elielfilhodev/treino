@@ -376,26 +376,31 @@ export default function Home() {
   const selectedWorkout = workouts.find((w) => w.id === selectedWorkoutId) ?? null;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <header className="mb-8 flex items-center justify-between">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-tight text-zinc-600">
+    <div className="mx-auto min-h-screen max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
+      <header className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex-1">
+          <p className="text-xs font-semibold uppercase tracking-tight text-zinc-500 sm:text-sm">
             Treino
           </p>
-          <h1 className="text-3xl font-semibold text-zinc-900">
-            Agenda, checklist e compras em um só lugar
+          <h1 className="mt-1 text-2xl font-bold text-zinc-900 sm:text-3xl lg:text-4xl">
+            Agenda, checklist e compras
           </h1>
-          <p className="mt-1 text-sm text-zinc-600">
+          <p className="mt-2 text-sm leading-relaxed text-zinc-600 sm:text-base">
             Planeje a semana, marque exercícios concluídos e mantenha tudo sincronizado.
           </p>
         </div>
         {user ? (
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <p className="text-sm text-zinc-600">Bem-vindo</p>
-              <p className="text-sm font-medium text-zinc-900">{user.name}</p>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+            <div className="text-left sm:text-right">
+              <p className="text-xs text-zinc-500 sm:text-sm">Bem-vindo</p>
+              <p className="text-sm font-semibold text-zinc-900 sm:text-base">{user.name}</p>
             </div>
-            <Button variant="ghost" size="sm" onClick={handleLogout} className="flex gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleLogout} 
+              className="w-full justify-center gap-2 sm:w-auto"
+            >
               <LogOut className="h-4 w-4" />
               Sair
             </Button>
@@ -404,28 +409,32 @@ export default function Home() {
       </header>
 
       {feedback ? (
-        <div className="mb-4 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+        <div className="mb-4 animate-in fade-in slide-in-from-top-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-900 shadow-sm">
           {feedback}
         </div>
       ) : null}
       {error ? (
-        <div className="mb-4 rounded-xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+        <div className="mb-4 animate-in fade-in slide-in-from-top-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-900 shadow-sm">
           {error}
         </div>
       ) : null}
 
-      {!user ? (
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card>
+      {loading && !user ? (
+        <div className="flex items-center justify-center py-20">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-200 border-t-zinc-900"></div>
+        </div>
+      ) : !user ? (
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
+          <Card className="transition-all hover:shadow-lg">
             <CardHeader>
-              <CardTitle>
+              <CardTitle className="text-xl sm:text-2xl">
                 {authMode === "login" ? "Entrar" : "Criar conta"}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-sm sm:text-base">
                 Sessão segura com tokens JWT (access + refresh) e bcrypt para senhas.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 sm:space-y-5">
               {authMode === "register" && (
                 <div className="space-y-2">
                   <Label>Nome</Label>
@@ -474,15 +483,15 @@ export default function Home() {
               </p>
             </CardContent>
           </Card>
-          <Card className="bg-zinc-900 text-white">
+                <Card className="bg-gradient-to-br from-zinc-900 to-zinc-800 text-white shadow-xl">
             <CardHeader>
-              <CardTitle>Como funciona</CardTitle>
-              <CardDescription className="text-zinc-200">
+              <CardTitle className="text-xl sm:text-2xl">Como funciona</CardTitle>
+              <CardDescription className="text-sm text-zinc-300 sm:text-base">
                 API Express + Prisma + PostgreSQL (Neon) com JWT e refresh token. UI em
                 Next.js + shadcn/ui.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3 text-sm text-zinc-100">
+            <CardContent className="space-y-3 text-sm sm:text-base">
               <p className="flex items-center gap-2">
                 <CheckSquare className="h-4 w-4" />
                 Checklist de exercícios com conclusão automática do treino.
@@ -503,14 +512,14 @@ export default function Home() {
           </Card>
         </div>
       ) : (
-        <div className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-3">
-            <Card>
+        <div className="space-y-6 sm:space-y-8">
+          <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
+            <Card className="transition-shadow hover:shadow-md">
               <CardHeader>
-                <CardTitle>Progresso semanal</CardTitle>
-                <CardDescription>Treinos concluídos vs. planejados</CardDescription>
+                <CardTitle className="text-lg sm:text-xl">Progresso semanal</CardTitle>
+                <CardDescription className="text-sm">Treinos concluídos vs. planejados</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-3 sm:space-y-4">
                 <Progress value={progressStats()} />
                 <div className="flex items-center justify-between text-sm text-zinc-600">
                   <span>{workouts.filter((w) => w.completed).length} concluídos</span>
@@ -525,12 +534,12 @@ export default function Home() {
                 </div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="transition-shadow hover:shadow-md">
               <CardHeader>
-                <CardTitle>Histórico recente</CardTitle>
-                <CardDescription>Últimos treinos finalizados</CardDescription>
+                <CardTitle className="text-lg sm:text-xl">Histórico recente</CardTitle>
+                <CardDescription className="text-sm">Últimos treinos finalizados</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-2 sm:space-y-3">
                 {history.length === 0 ? (
                   <p className="text-sm text-zinc-600">Sem histórico ainda.</p>
                 ) : (
@@ -548,18 +557,23 @@ export default function Home() {
                 )}
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
+            <Card className="transition-shadow hover:shadow-md">
+              <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <CardTitle>Lista de compras</CardTitle>
-                  <CardDescription>Suplementos e mercado</CardDescription>
+                  <CardTitle className="text-lg sm:text-xl">Lista de compras</CardTitle>
+                  <CardDescription className="text-sm">Suplementos e mercado</CardDescription>
                 </div>
-                <Button size="sm" variant="subtle" onClick={() => setActiveTab("compras")}>
+                <Button 
+                  size="sm" 
+                  variant="subtle" 
+                  onClick={() => setActiveTab("compras")}
+                  className="w-full sm:w-auto"
+                >
                   Ver lista
                 </Button>
               </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="flex items-center gap-2">
+              <CardContent className="space-y-3 sm:space-y-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                   <Input
                     placeholder="Item"
                     value={shoppingForm.name}
@@ -574,8 +588,13 @@ export default function Home() {
                       setShoppingForm((p) => ({ ...p, quantity: e.target.value }))
                     }
                   />
-                  <Button size="sm" onClick={handleShoppingCreate}>
+                  <Button 
+                    size="sm" 
+                    onClick={handleShoppingCreate}
+                    className="w-full sm:w-auto"
+                  >
                     <Plus className="h-4 w-4" />
+                    <span className="sm:hidden">Adicionar</span>
                   </Button>
                 </div>
                 <div className="space-y-2">
@@ -601,28 +620,34 @@ export default function Home() {
             </Card>
           </div>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+          <Card className="transition-shadow hover:shadow-lg">
+            <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <CardTitle>Área principal</CardTitle>
-                <CardDescription>Agenda, checklist e preferências</CardDescription>
+                <CardTitle className="text-xl sm:text-2xl">Área principal</CardTitle>
+                <CardDescription className="text-sm sm:text-base">
+                  Agenda, checklist e preferências
+                </CardDescription>
               </div>
-              <Button onClick={() => setShowWorkoutModal(true)} className="flex gap-2">
+              <Button 
+                onClick={() => setShowWorkoutModal(true)} 
+                className="w-full gap-2 sm:w-auto"
+                size="sm"
+              >
                 <Plus className="h-4 w-4" />
                 Novo treino
               </Button>
             </CardHeader>
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList>
-                  <TabsTrigger value="agenda">Agenda semanal</TabsTrigger>
-                  <TabsTrigger value="treino">Checklist</TabsTrigger>
-                  <TabsTrigger value="compras">Compras</TabsTrigger>
-                  <TabsTrigger value="preferencias">Preferências</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 gap-1 sm:inline-flex sm:grid-cols-none">
+                  <TabsTrigger value="agenda" className="text-xs sm:text-sm">Agenda</TabsTrigger>
+                  <TabsTrigger value="treino" className="text-xs sm:text-sm">Checklist</TabsTrigger>
+                  <TabsTrigger value="compras" className="text-xs sm:text-sm">Compras</TabsTrigger>
+                  <TabsTrigger value="preferencias" className="text-xs sm:text-sm">Prefs</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="agenda" className="space-y-4">
-                  <div className="grid gap-3 md:grid-cols-2">
+                <TabsContent value="agenda" className="mt-6 space-y-4">
+                  <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
                     {workouts.length === 0 ? (
                       <p className="text-sm text-zinc-600">
                         Nenhum treino cadastrado. Crie um novo para começar.
@@ -631,7 +656,7 @@ export default function Home() {
                       [...workouts].sort(sortWorkouts).map((workout) => (
                         <div
                           key={workout.id}
-                          className="rounded-xl border border-zinc-200 bg-white p-4"
+                          className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition-all hover:shadow-md sm:p-5"
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div className="space-y-1 flex-1">
@@ -696,11 +721,11 @@ export default function Home() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="treino" className="grid gap-6 md:grid-cols-2">
+                <TabsContent value="treino" className="mt-6 grid gap-6 lg:grid-cols-2">
                   <div className="space-y-3">
                     <Label>Escolha o treino</Label>
                     <select
-                      className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm"
+                      className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm transition-colors focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-200"
                       value={selectedWorkoutId ?? ""}
                       onChange={(e) => setSelectedWorkoutId(e.target.value)}
                     >
@@ -713,7 +738,7 @@ export default function Home() {
                     </select>
 
                     {selectedWorkout ? (
-                      <div className="space-y-3 rounded-xl border border-zinc-200 bg-white p-4">
+                      <div className="space-y-3 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="text-xs uppercase text-zinc-500">
@@ -731,7 +756,7 @@ export default function Home() {
                           {selectedWorkout.exercises.map((exercise) => (
                             <label
                               key={exercise.id}
-                              className="flex items-start gap-3 rounded-lg border border-zinc-100 p-3"
+                              className="flex items-start gap-3 rounded-lg border border-zinc-100 p-3 transition-all hover:border-zinc-200 hover:bg-zinc-50 cursor-pointer"
                             >
                               <input
                                 type="checkbox"
@@ -821,12 +846,12 @@ export default function Home() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="compras" className="space-y-4">
-                  <div className="grid gap-3 md:grid-cols-2">
+                <TabsContent value="compras" className="mt-6 space-y-4">
+                  <div className="grid gap-3 sm:gap-4 lg:grid-cols-2">
                     {shopping.map((item) => (
                       <div
                         key={item.id}
-                        className="flex items-center justify-between rounded-xl border border-zinc-200 bg-white p-4"
+                        className="flex items-center justify-between rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition-all hover:shadow-md sm:p-5"
                       >
                         <div className="flex-1">
                           <p className="text-sm font-semibold text-zinc-900">{item.name}</p>
@@ -853,7 +878,7 @@ export default function Home() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="preferencias" className="space-y-4">
+                <TabsContent value="preferencias" className="mt-6 space-y-4 sm:space-y-6">
                   <div className="space-y-2">
                     <Label>Objetivos (separe por vírgula)</Label>
                     <Input
@@ -904,8 +929,8 @@ export default function Home() {
         onClose={() => setShowWorkoutModal(false)}
         title="Novo treino"
       >
-        <div className="space-y-3">
-          <div className="grid gap-3 md:grid-cols-2">
+        <div className="space-y-4 sm:space-y-5">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label>Nome</Label>
               <Input
@@ -927,11 +952,11 @@ export default function Home() {
               />
             </div>
           </div>
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label>Dia da semana</Label>
               <select
-                className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm transition-colors focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-200"
                 value={workoutForm.dayOfWeek}
                 onChange={(e) =>
                   setWorkoutForm((p) => ({ ...p, dayOfWeek: Number(e.target.value) }))
@@ -965,12 +990,20 @@ export default function Home() {
               }
             />
           </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setShowWorkoutModal(false)}>
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowWorkoutModal(false)}
+              className="w-full sm:w-auto"
+            >
               Cancelar
             </Button>
-            <Button onClick={handleCreateWorkout} disabled={loading}>
-              Salvar treino
+            <Button 
+              onClick={handleCreateWorkout} 
+              disabled={loading}
+              className="w-full sm:w-auto"
+            >
+              {loading ? "Criando..." : "Criar treino"}
             </Button>
           </div>
         </div>
