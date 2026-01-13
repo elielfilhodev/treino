@@ -4,8 +4,8 @@ import { env } from "../config/env";
 
 type TokenPayload = JwtPayload & { sub: string };
 
-export function signAccessToken(userId: string) {
-  return jwt.sign({ sub: userId }, env.JWT_ACCESS_SECRET, {
+export function signAccessToken(userId: string): string {
+  return jwt.sign({ sub: userId }, env.JWT_ACCESS_SECRET as string, {
     expiresIn: env.ACCESS_TOKEN_TTL,
   });
 }
@@ -20,6 +20,6 @@ export function hashToken(token: string) {
 }
 
 export function verifyAccessToken(token: string): TokenPayload {
-  return jwt.verify(token, env.JWT_ACCESS_SECRET) as TokenPayload;
+  return jwt.verify(token, env.JWT_ACCESS_SECRET as string) as TokenPayload;
 }
 

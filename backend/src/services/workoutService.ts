@@ -71,7 +71,7 @@ export async function createWorkout(
     data: {
       userId,
       name: data.name,
-      description: data.description,
+      description: data.description ?? "",
       dayOfWeek: data.dayOfWeek,
       time: data.time,
       exercises: data.exercises
