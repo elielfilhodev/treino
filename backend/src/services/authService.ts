@@ -1,9 +1,9 @@
 import { type User } from "@prisma/client";
 import bcrypt from "bcrypt";
-import { env } from "../config/env";
-import { createError } from "../lib/errors";
-import { prisma } from "../lib/prisma";
-import { hashToken, signAccessToken, signRefreshToken } from "../lib/tokens";
+import { env } from "../config/env.js";
+import { createError } from "../lib/errors.js";
+import { prisma } from "../lib/prisma.js";
+import { hashToken, signAccessToken, signRefreshToken } from "../lib/tokens.js";
 
 function ttlToMs(ttl: string) {
   const match = ttl.match(/^(\d+)([smhd])$/);

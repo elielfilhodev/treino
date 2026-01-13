@@ -1,9 +1,9 @@
 import { Router } from "express";
 import type { Response, NextFunction } from "express";
-import { preferencesSchema } from "../schemas/preferencesSchemas";
-import { authenticate } from "../middleware/auth";
-import { getProfile, updatePreferences } from "../services/authService";
-import type { AuthenticatedRequest } from "../types/express";
+import { preferencesSchema } from "../schemas/preferencesSchemas.js";
+import { authenticate } from "../middleware/auth.js";
+import { getProfile, updatePreferences } from "../services/authService.js";
+import type { AuthenticatedRequest } from "../types/express.js";
 
 const router = Router();
 

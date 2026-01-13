@@ -3,10 +3,10 @@ import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
-import { env } from "./config/env";
-import { errorHandler } from "./middleware/errorHandler";
-import { apiLimiter } from "./middleware/rateLimit";
-import routes from "./routes";
+import { env } from "./config/env.js";
+import { errorHandler } from "./middleware/errorHandler.js";
+import { apiLimiter } from "./middleware/rateLimit.js";
+import routes from "./routes/index.js";
 
 const app = express();
 

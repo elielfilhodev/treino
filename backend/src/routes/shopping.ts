@@ -1,14 +1,14 @@
 import { Router, type Response, type NextFunction } from "express";
-import { authenticate } from "../middleware/auth";
+import { authenticate } from "../middleware/auth.js";
 import {
   createShoppingItem,
   deleteShoppingItem,
   listShoppingItems,
   toggleShoppingItem,
   updateShoppingItem,
-} from "../services/shoppingService";
-import { shoppingItemSchema } from "../schemas/shoppingSchemas";
-import type { AuthenticatedRequest } from "../types/express";
+} from "../services/shoppingService.js";
+import { shoppingItemSchema } from "../schemas/shoppingSchemas.js";
+import type { AuthenticatedRequest } from "../types/express.js";
 
 const router = Router();
 

@@ -1,5 +1,5 @@
 import { Router, type NextFunction, type Response } from "express";
-import { authenticate } from "../middleware/auth";
+import { authenticate } from "../middleware/auth.js";
 import {
   addExercise,
   completeWorkout,
@@ -11,14 +11,14 @@ import {
   toggleExercise,
   updateExercise,
   updateWorkout,
-} from "../services/workoutService";
+} from "../services/workoutService.js";
 import {
   createWorkoutSchema,
   exerciseSchema,
   exerciseToggleSchema,
   updateWorkoutSchema,
-} from "../schemas/workoutSchemas";
-import type { AuthenticatedRequest } from "../types/express";
+} from "../schemas/workoutSchemas.js";
+import type { AuthenticatedRequest } from "../types/express.js";
 
 const router = Router();
 

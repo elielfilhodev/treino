@@ -1,7 +1,7 @@
 import type { NextFunction, Response } from "express";
-import { createError } from "../lib/errors";
-import { verifyAccessToken } from "../lib/tokens";
-import type { AuthenticatedRequest } from "../types/express";
+import { createError } from "../lib/errors.js";
+import { verifyAccessToken } from "../lib/tokens.js";
+import type { AuthenticatedRequest } from "../types/express.js";
 
 export function authenticate(
   req: AuthenticatedRequest,

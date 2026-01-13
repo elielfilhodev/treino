@@ -1,9 +1,9 @@
 import { Router } from "express";
-import authRoutes from "./auth";
-import healthRoutes from "./health";
-import preferencesRoutes from "./preferences";
-import shoppingRoutes from "./shopping";
-import workoutRoutes from "./workouts";
+import authRoutes from "./auth.js";
+import healthRoutes from "./health.js";
+import preferencesRoutes from "./preferences.js";
+import shoppingRoutes from "./shopping.js";
+import workoutRoutes from "./workouts.js";
 
 const router = Router();
 

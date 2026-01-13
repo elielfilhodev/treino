@@ -1,5 +1,5 @@
-import { prisma } from "../lib/prisma";
-import { createError } from "../lib/errors";
+import { prisma } from "../lib/prisma.js";
+import { createError } from "../lib/errors.js";
 
 function ensureOwner(userId: string, resourceUserId: string) {
   if (userId !== resourceUserId) {

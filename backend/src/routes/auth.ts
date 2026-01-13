@@ -6,10 +6,10 @@ import {
   refreshSession,
   registerUser,
   revokeRefreshToken,
-} from "../services/authService";
-import { authenticate } from "../middleware/auth";
-import type { AuthenticatedRequest } from "../types/express";
-import { loginSchema, refreshSchema, registerSchema } from "../schemas/authSchemas";
+} from "../services/authService.js";
+import { authenticate } from "../middleware/auth.js";
+import type { AuthenticatedRequest } from "../types/express.js";
+import { loginSchema, refreshSchema, registerSchema } from "../schemas/authSchemas.js";
 
 const router = Router();
 
