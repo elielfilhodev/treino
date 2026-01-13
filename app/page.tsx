@@ -94,7 +94,14 @@ export default function Home() {
       setPreferences(prefRes.preferences);
       setSelectedWorkoutId((workoutsRes.workouts[0]?.id as string | undefined) ?? null);
     } catch (err) {
-      setError((err as Error).message);
+      const error = err as Error;
+      // Se for erro de autenticação, limpa os tokens
+      if (error.message.includes("401") || error.message.includes("não autorizado") || error.message.includes("token")) {
+        setTokens(null);
+        persistTokens(null);
+        setUser(null);
+      }
+      setError(error.message);
     } finally {
       setLoading(false);
     }
